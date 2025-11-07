@@ -121,7 +121,7 @@ function renderScoreboard() {
         const teamRowHTML = `
                     <div class="row py-1 align-items-center team-row-item">
                         
-                        <div class="col-4">
+                        <div class="col-3">
                             <h6 class="mb-0">${name}</h5>
                         </div>
                         
@@ -129,7 +129,7 @@ function renderScoreboard() {
                             <span id="score-${safeName}" class="score-display">${currentScore}</span>
                         </div>
 
-                        <div class="col-7 d-flex align-items-center justify-content-end">
+                        <div class="col-8 d-flex align-items-center justify-content-end">
 
                             <div class="btn-group me-1" role="group">
                                 <button type="button" class="btn btn-outline-success" onclick="updateScore('${name}', 10)">+10</button>
