@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="index.js"></script>
 
     <style>
         html,
@@ -22,6 +23,26 @@
             border-radius: 120px;
             width: 100%;
             padding: 100px 20px;
+        }
+
+         /* Optional: Add a little padding to the overall container */
+        .container {
+            padding: 20px;
+        }
+        /* Style for the score display */
+        .score-display {
+            
+            font-weight: bold;
+            text-align: center;
+        }
+        /* Vertically center content in the row */
+        .team-row-item {
+            display: flex;
+            align-items: center;
+        }
+        /* Spacing between buttons */
+        .btn-group > .btn {
+            margin-right: 5px; 
         }
     </style>
 </head>
@@ -75,109 +96,30 @@
             <div class="col"></div>
         </div>
 
+    </div>   
+
+     <div class="container mt-4" id="teamScore" style="display:none">
+        <h3 class="mb-2 text-center">Tournament Score Entry</h1>
+        
+        <div id="scoreboard-container">
+            </div>
+
+        <hr class="my-2">      
+		
+		<div class="row">
+            <div class="col-6 text-start">
+                <button id="resetScoresBtn" class="btn btn-warning" onclick="resetScores()">
+                    Reset All Scores
+                </button>
+            </div>
+            <div class="col-6 text-end">
+                <button id="submitScores" class="btn btn-success" onclick="submitScore()">
+                    Submit Final Scores
+                </button>
+            </div>
+        </div>
+
     </div>
-
-
-
-
-    <script>
-        const socket = io();
-        let isHost = false;
-
-        function join() {
-            const name = document.getElementById("teamName").value.trim();
-            if (!name) {
-                return alert("Enter team name");
-            }
-            socket.emit("register", name);
-            document.getElementById("teamDisplay").innerText = name;
-            if (name.toLowerCase() === "host") isHost = true;
-
-            if (!isHost) {
-                document.getElementById("joinDiv").style.display = "none";
-                document.getElementById("buzzerDiv").style.display = "";
-                document.getElementById("buzzBtn").style.display = "";
-            } else {
-                document.getElementById("joinDiv").style.display = "none";
-                document.getElementById("buzzerDiv").style.display = "";
-                document.getElementById("resetBtn").style.display = "";
-            }
-
-        }
-
-        function buzz() {
-            document.getElementById("buzzBtn").classList.add("disabled");
-            socket.emit("buzz");
-            playAudio();
-        }
-        function reset() {
-            if (!isHost) return alert("Only host can reset!");
-            socket.emit("reset");
-        }
-
-        socket.on("winner", (name, ts) => {
-
-            const winnercontainer = document.getElementById('winner');
-            const winnerName = document.createElement('span');
-            winnerName.textContent = "🏆 " + name + " buzzed first!";
-            winnerName.className = 'badge rounded-pill text-bg-success p-2 me-2';
-            winnercontainer.appendChild(winnerName);
-
-            //document.getElementById("winner").innerText = "🏆 " + name + " buzzed first!";
-        });
-        socket.on("reset", () => {
-            document.getElementById("buzzBtn").classList.remove("disabled");
-            document.getElementById("winner").innerText = "";
-            document.getElementById('runner').innerText = "";
-        });
-
-        socket.on("runner", (name, ts) => {
-            const runnercontainer = document.getElementById('runner');
-            const runnerName = document.createElement('span');
-            runnerName.textContent = name + " +" + ts;
-            runnerName.className = 'badge rounded-pill text-bg-secondary p-2 me-2';
-            runnercontainer.appendChild(runnerName);
-        });
-
-        socket.on("teamList", list => {
-            renderTags(list);
-        });
-
-        socket.on("reload", () => {
-            //join(false);
-            var currName = document.getElementById("teamDisplay").innerText.trim();
-            if (currName) {
-                socket.emit("register", currName);
-            }
-        });
-
-        function renderTags(list) {
-            const container = document.getElementById('allTeams');
-            container.innerHTML = '';
-            if (!container) {
-                console.error("Tag container element not found.");
-                return;
-            }
-
-            // --- 2. Iterate and create elements ---
-            list.forEach(text => {
-                // Create the capsule element
-                const capsule = document.createElement('span');
-                // --- 3. Apply Tailwind Capsule Styling (Simulating bg-info) ---
-                // Using blue colors for the 'info' style, rounded-full for capsule shape
-                capsule.className = 'badge rounded-pill text-bg-info p-2 me-2';
-                // Set the text content
-                capsule.textContent = text;
-                // Append the new capsule to the container
-                container.appendChild(capsule);
-            });
-        }
-
-        function playAudio() {
-            var audio = new Audio('buzzer.wav');
-            audio.play();
-        }
-    </script>
 </body>
 
 </html>
