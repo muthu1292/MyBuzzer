@@ -9,6 +9,11 @@
     <script src="/socket.io/socket.io.js"></script>
 
     <style>
+        html,
+        body {
+            overscroll-behavior-y: none;
+        }
+
         #buzzBtn {
             font-size: 32px;
             margin: 5px;
@@ -116,7 +121,7 @@
             const winnerName = document.createElement('span');
             winnerName.textContent = "🏆 " + name + " buzzed first!";
             winnerName.className = 'badge rounded-pill text-bg-success p-2 me-2';
-            winnercontainer.appendChild(winnerName);           
+            winnercontainer.appendChild(winnerName);
 
             //document.getElementById("winner").innerText = "🏆 " + name + " buzzed first!";
         });
@@ -129,9 +134,9 @@
         socket.on("runner", (name, ts) => {
             const runnercontainer = document.getElementById('runner');
             const runnerName = document.createElement('span');
-            runnerName.textContent = name + " +" + ts ;
+            runnerName.textContent = name + " +" + ts;
             runnerName.className = 'badge rounded-pill text-bg-secondary p-2 me-2';
-            runnercontainer.appendChild(runnerName);           
+            runnercontainer.appendChild(runnerName);
         });
 
         socket.on("teamList", list => {
@@ -166,8 +171,8 @@
                 // Append the new capsule to the container
                 container.appendChild(capsule);
             });
-        }   
-        
+        }
+
         function playAudio() {
             var audio = new Audio('buzzer.wav');
             audio.play();
