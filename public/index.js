@@ -1,6 +1,7 @@
 const socket = io();
 let isHost = false;
 let teamNames = [];
+const teamScores = {};
 
 function join() {
     const name = document.getElementById("teamName").value.trim();
@@ -11,15 +12,17 @@ function join() {
     document.getElementById("teamDisplay").innerText = name;
     if (name.toLowerCase() === "host") isHost = true;
 
+     document.getElementById("buzzerDiv").style.display = "";
+
     if (!isHost) {
-        document.getElementById("joinDiv").style.display = "none";
-        document.getElementById("buzzerDiv").style.display = "";
+        document.getElementById("joinDiv").style.display = "none";        
         document.getElementById("buzzBtn").style.display = "";
     } else {
-        document.getElementById("joinDiv").style.display = "none";
-        document.getElementById("buzzerDiv").style.display = "";
+        //HOST Logic
+        document.getElementById("joinDiv").style.display = "none";       
         document.getElementById("resetBtn").style.display = "";
-        document.getElementById("teamScore").style.display = "";
+        document.getElementById("teamScore").style.display = "";        
+        document.getElementById("hostDiv").style.display = "";
     }
 
 }
@@ -37,6 +40,8 @@ function reset() {
 function scoreReset(){
     if (confirm("Are you sure you want to reset ALL team scores to zero?")) {
         socket.emit("resetScore");
+        teamScores = {};
+        resetScores();
     }
 }
 
@@ -113,7 +118,7 @@ function playAudio() {
 }
 
 // Initialize scores (using an object for simple key-value storage)
-const teamScores = {};
+
 
 function initializeScores() {
     teamNames.forEach(name => teamScores[name] = 0);
