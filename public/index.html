@@ -25,24 +25,27 @@
             padding: 100px 20px;
         }
 
-         /* Optional: Add a little padding to the overall container */
+        /* Optional: Add a little padding to the overall container */
         .container {
             padding: 20px;
         }
+
         /* Style for the score display */
         .score-display {
-            
+
             font-weight: bold;
             text-align: center;
         }
+
         /* Vertically center content in the row */
         .team-row-item {
             display: flex;
             align-items: center;
         }
+
         /* Spacing between buttons */
-        .btn-group > .btn {
-            margin-right: 5px; 
+        .btn-group>.btn {
+            margin-right: 5px;
         }
     </style>
 </head>
@@ -74,7 +77,11 @@
             <div class="col-8 form-group">
                 <h2 id="teamDisplay"></h2>
                 <button id="buzzBtn" class="btn btn-secondary" style="display:none" onclick="buzz()">BUZZ!</button><br>
-                <button id="resetBtn" class="btn btn-success" style="display:none" onclick="reset()">RESET</button>
+                <div id="resetBtn" style="display:none">
+                    <button id="resetBtn" class="btn btn-success"  onclick="reset()">RESET</button>
+                    <button id="srcResetBtn" class="btn btn-danger" onclick="scoreReset()">CLEAR SCORE</button>
+                </div>
+
             </div>
             <div class="col"></div>
         </div>
@@ -96,29 +103,36 @@
             <div class="col"></div>
         </div>
 
-    </div>   
+    </div>
 
-     <div class="container mt-4" id="teamScore" style="display:none">
+    <div class="container mt-4" id="teamScore" style="display:none">
         <h3 class="mb-2 text-center">Tournament Score Entry</h1>
-        
-        <div id="scoreboard-container">
+
+            <div id="scoreboard-container">
             </div>
 
-        <hr class="my-2">      
-		
-		<div class="row">
-            <div class="col-6 text-start">
-                <button id="resetScoresBtn" class="btn btn-warning" onclick="resetScores()">
-                    Reset
-                </button>
+            <hr class="my-2">
+
+            <div class="row">
+                <div class="col-6 text-start">
+                    <button id="resetScoresBtn" class="btn btn-warning" onclick="resetScores()">
+                        Reset
+                    </button>
+                </div>
+                <div class="col-6 text-end">
+                    <button id="submitScores" class="btn btn-success" onclick="submitScore()">
+                        Submit
+                    </button>
+                </div>
             </div>
-            <div class="col-6 text-end">
-                <button id="submitScores" class="btn btn-success" onclick="submitScore()">
-                    Submit
-                </button>
-            </div>
+
+    </div>
+
+    <div class="container mt-4">
+        <h2 class="mb-4">Team Score Results</h2>
+
+        <div id="scoreTableContainer">
         </div>
-
     </div>
 </body>
 

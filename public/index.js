@@ -34,6 +34,12 @@ function reset() {
     socket.emit("reset");
 }
 
+function scoreReset(){
+    if (confirm("Are you sure you want to reset ALL team scores to zero?")) {
+        socket.emit("resetScore");
+    }
+}
+
 socket.on("winner", (name, ts) => {
 
     const winnercontainer = document.getElementById('winner');
@@ -60,7 +66,7 @@ socket.on("runner", (name, ts) => {
 
 socket.on("teamList", list => {
     renderTags(list);
-    if(isHost){
+    if (isHost) {
         teamNames = list;
         resetScores();
     }
@@ -72,6 +78,11 @@ socket.on("reload", () => {
     if (currName) {
         socket.emit("register", currName);
     }
+});
+
+socket.on("teamScore", (scoreResults) => {
+    //console.log(scoreResults);
+    renderScoreTable(scoreResults);
 });
 
 function renderTags(list) {
@@ -88,7 +99,7 @@ function renderTags(list) {
         const capsule = document.createElement('span');
         // --- 3. Apply Tailwind Capsule Styling (Simulating bg-info) ---
         // Using blue colors for the 'info' style, rounded-full for capsule shape
-        capsule.className = 'badge rounded-pill text-bg-info p-2 me-2';
+        capsule.className = 'rounded-pill border border-primary text-primary px-3 py-1 me-2';
         // Set the text content
         capsule.textContent = text;
         // Append the new capsule to the container
@@ -114,11 +125,14 @@ function renderScoreboard() {
     container.innerHTML = ''; // Clear existing content
 
     teamNames.forEach(name => {
-        const safeName = name.replace(/\s/g, '-').replace(/[^\w-]/g, ''); // Safe ID for HTML elements
-        const currentScore = teamScores[name];
+        if (!name || name.toLowerCase() === "host") {
+            //Host
+        } else {
+            const safeName = name.replace(/\s/g, '-').replace(/[^\w-]/g, ''); // Safe ID for HTML elements
+            const currentScore = teamScores[name];
 
-        // Create the HTML structure for a single team row using Bootstrap columns
-        const teamRowHTML = `
+            // Create the HTML structure for a single team row using Bootstrap columns
+            const teamRowHTML = `
                     <div class="row py-1 align-items-center team-row-item">
                         
                         <div class="col-3">
@@ -144,7 +158,8 @@ function renderScoreboard() {
                         </div>
                     </div>
                 `;
-        container.innerHTML += teamRowHTML;
+            container.innerHTML += teamRowHTML;
+        }
     });
 }
 
@@ -177,15 +192,17 @@ function applyCustomScore(teamName) {
 // --- 2. Submit Button Action ---
 
 function submitScore() {
-    console.log("Final Scores Submitted:");
-    console.log(teamScores);
+    //console.log("Final Scores Submitted:");
+    //console.log(teamScores);
 
-    let resultMessage = "Final Scores:\n\n";
-    for (const team in teamScores) {
-        resultMessage += `${team}: ${teamScores[team]}\n`;
-    }
+    //let resultMessage = "Final Scores:\n\n";
+    //for (const team in teamScores) {
+    //    resultMessage += `${team}: ${teamScores[team]}\n`;
+    //}
 
-    alert(resultMessage);
+    socket.emit("addScore", teamScores);
+
+    //alert(resultMessage);
     resetScores();
     // In a real application, you would use fetch() or AJAX here 
     // to send teamScores to a server-side script.
@@ -197,4 +214,60 @@ function resetScores() {
     renderScoreboard(); // Re-render the UI with new zero values
     //alert("Scores have been reset!");
     //}
+}
+
+function renderScoreTable(data) {
+    // Get the list of all teams (keys of the inner objects)
+    const teams = Object.keys(data[1] || {});
+    // Get the list of all rounds (keys of the outer object)
+    const rounds = Object.keys(data);
+
+    // Calculate initial totals for each team
+    const totals = teams.reduce((acc, team) => {
+        acc[team] = 0;
+        return acc;
+    }, {});
+
+    // --- 2. Build the table structure with Bootstrap 5 classes ---
+
+    let html = `
+            <table class="table table-striped table-bordered table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">Round</th>
+                        ${teams.map(team => `<th scope="col" class="text-center">${team}</th>`).join('')}
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+    // Add rows for each round
+    rounds.forEach(round => {
+        html += `<tr><th scope="row">${round}</th>`;
+        teams.forEach(team => {
+            const score = data[round][team] || 0;
+            // Update the running total
+            totals[team] += score;
+            // Add a class for negative scores if needed (optional styling)
+            let scoreClass = score < 0 ? 'text-danger fw-bold' : 'text-success fw-bold';
+            scoreClass = score === 0 ? "" : scoreClass;
+            html += `<td class="text-center ${scoreClass}">${score}</td>`;
+        });
+        html += `</tr>`;
+    });
+
+    // Add the total score row in <tfoot>
+    html += `
+                </tbody>
+                <tfoot class="table-primary fw-bold">
+                    <tr>
+                        <td class="text-end">Total Score</td>
+                        ${teams.map(team => `<td class="text-center">${totals[team]}</td>`).join('')}
+                    </tr>
+                </tfoot>
+            </table>
+        `;
+
+    // 3. Insert the generated HTML into the container
+    document.getElementById('scoreTableContainer').innerHTML = html;
 }
