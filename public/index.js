@@ -72,6 +72,7 @@ socket.on("runner", (name, ts) => {
 socket.on("teamList", list => {
     renderTags(list);
     if (isHost) {
+        teamNames = [];
         teamNames = list;
         resetScores();
     }
@@ -104,7 +105,7 @@ function renderTags(list) {
         const capsule = document.createElement('span');
         // --- 3. Apply Tailwind Capsule Styling (Simulating bg-info) ---
         // Using blue colors for the 'info' style, rounded-full for capsule shape
-        capsule.className = 'rounded-pill border border-primary text-primary px-3 py-1 me-2';
+        capsule.className = 'badge rounded-pill border border-primary text-primary px-2 py-1 me-2 mb-1';
         // Set the text content
         capsule.textContent = text;
         // Append the new capsule to the container

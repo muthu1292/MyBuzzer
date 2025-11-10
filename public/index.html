@@ -26,9 +26,9 @@
         }
 
         /* Optional: Add a little padding to the overall container */
-        .container {
+        /* .container {
             padding: 20px;
-        }
+        } */
 
         /* Style for the score display */
         .score-display {
@@ -77,7 +77,8 @@
             <div class="col-8 form-group">
                 <h2 id="teamDisplay"></h2>
                 <button id="buzzBtn" class="btn btn-secondary" style="display:none" onclick="buzz()">BUZZ!</button><br>
-                <button id="resetBtn" class="btn btn-success p-3 px-5" style="display:none" onclick="reset()">RESET</button>
+                <button id="resetBtn" class="btn btn-success p-3 px-5" style="display:none"
+                    onclick="reset()">RESET</button>
             </div>
             <div class="col"></div>
         </div>
@@ -94,11 +95,15 @@
         </div>
         <div class="row mt-1">
             <div class="col"></div>
-            <div id="allTeams" class="col-8 flex-wrap align-items-center p-3">
-            </div>
-            <div class="col"></div>
-        </div>
 
+        </div>
+        <div class="col"></div>
+    </div>
+
+    </div>
+
+    <div class="container mt-2">
+        <div id="allTeams" class="flex-wrap text-center align-items-center p-1"></div>
     </div>
 
     <div class="container mt-2" id="teamScore" style="display:none">
